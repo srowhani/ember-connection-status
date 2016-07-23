@@ -2,6 +2,11 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
   connectionStatus: Ember.inject.service(),
+  init () {
+    this._super(...arguments)
+    let connection = this.get('connectionStatus')
+    connection.setup(this)
+  },
   actions: {
     online (event) {
       this.notifications.success(event.type, {

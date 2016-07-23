@@ -1,14 +1,11 @@
 import Ember from 'ember';
 
 export default Ember.Service.extend({
-  init () {
-    this._super(...arguments)
-
+  setup (owner) {
     ;['online', 'offline'].forEach(status => {
       window.addEventListener(status, event => {
-        let ctrl = this.container.lookup('controller:application')
         try {
-          ctrl.send(status, event)
+          owner.send(status, event)
         } catch (e) {}
       }, false)
     })
