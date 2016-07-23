@@ -401,7 +401,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.0+a1e126e9"});
+  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.0+e821cc69"});
 }
 
 /* jshint ignore:end */
