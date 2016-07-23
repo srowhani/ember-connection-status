@@ -1,6 +1,6 @@
 # Ember-connection-status
 
-## [demo](http://srowhani.github.io/ember-connection-status)
+[demo](http://srowhani.github.io/ember-connection-status)
 Convenience tool I threw together from this [gist](https://gist.github.com/lukes/e190d5db75204bc1ca64)
 This README outlines the details of collaborating on this Ember addon.
 
