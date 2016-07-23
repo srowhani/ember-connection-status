@@ -51,6 +51,11 @@ define('dummy/components/notification-message', ['exports', 'ember-cli-notificat
 define('dummy/controllers/application', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     connectionStatus: _ember['default'].inject.service(),
+    init: function init() {
+      this._super.apply(this, arguments);
+      var connection = this.get('connectionStatus');
+      connection.setup(this);
+    },
     actions: {
       online: function online(event) {
         this.notifications.success(event.type, {
@@ -283,14 +288,11 @@ define('dummy/services/ajax', ['exports', 'ember-ajax/services/ajax'], function 
 });
 define('dummy/services/connection-status', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Service.extend({
-    init: function init() {
-      var _this = this;
-
-      this._super.apply(this, arguments);['online', 'offline'].forEach(function (status) {
+    setup: function setup(owner) {
+      ;['online', 'offline'].forEach(function (status) {
         window.addEventListener(status, function (event) {
-          var ctrl = _this.container.lookup('controller:application');
           try {
-            ctrl.send(status, event);
+            owner.send(status, event);
           } catch (e) {}
         }, false);
       });
@@ -313,7 +315,7 @@ define("dummy/templates/application", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 24,
+            "line": 35,
             "column": 0
           }
         },
@@ -336,20 +338,14 @@ define("dummy/templates/application", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Try turning your wifi on and off\n  All you need is to include the service in a controller.\n  Events will fire actions on ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("controller:application");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
+        var el2 = dom.createTextNode("\n  Try turning your wifi on and off!\n  All you need is to include the service in a route or controller\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("pre");
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("\nimport Ember from 'ember';\n\nexport default Ember.Controller.extend({\n  connectionStatus: Ember.inject.service(),\n  actions: {\n    online (event) {\n      this.notifications.success(event.type);\n    },\n    offline (event) {\n      this.notifications.error(event.type);\n    }\n  }\n});\n");
+        var el3 = dom.createTextNode("\n  import Ember from 'ember';\n\n  export default Ember.Route.extend({\n    connectionStatus: Ember.inject.service(),\n    init () {\n      this._super(...arguments)\n      let connection = this.get('connectionStatus')\n      connection.setup(this)\n    },\n    actions: {\n      online (event) {\n        this.notifications.success(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      },\n      offline (event) {\n        this.notifications.error(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      }\n    }\n  });\n\n");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -401,7 +397,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.0+e821cc69"});
+  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.0+a2852b6f"});
 }
 
 /* jshint ignore:end */
