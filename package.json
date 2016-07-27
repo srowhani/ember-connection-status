@@ -1,7 +1,8 @@
 {
   "name": "ember-connection-status",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Hooks for loss and gain of connectivity for Ember.js",
+  "homepage": "srowhani.github.io/ember-connection-status",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,7 +12,10 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "bugs": {
+    "web": "https://github.com/srowhani/ember-connection-status/issues"
+  },
+  "repository": "https://github.com/srowhani/ember-connection-status",
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -43,7 +47,10 @@
     "loader.js": "^4.0.0"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "ember",
+    "connection",
+    "status"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5"
