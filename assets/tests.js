@@ -7,13 +7,22 @@ define('dummy/tests/app.jshint', ['exports'], function (exports) {
     assert.ok(true, 'app.js should pass jshint.');
   });
 });
+define('dummy/tests/components/test-component.jshint', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint - components/test-component.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/test-component.js should pass jshint.');
+  });
+});
 define('dummy/tests/controllers/application.jshint', ['exports'], function (exports) {
   'use strict';
 
   QUnit.module('JSHint - controllers/application.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'controllers/application.js should pass jshint.\ncontrollers/application.js: line 6, col 30, Missing semicolon.\ncontrollers/application.js: line 7, col 50, Missing semicolon.\ncontrollers/application.js: line 8, col 27, Missing semicolon.\n\n3 errors');
+    assert.ok(true, 'controllers/application.js should pass jshint.');
   });
 });
 define('dummy/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {

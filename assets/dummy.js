@@ -48,6 +48,30 @@ define('dummy/components/notification-message', ['exports', 'ember-cli-notificat
     icons: config.icons || 'font-awesome'
   });
 });
+define('dummy/components/test-component', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Component.extend({
+    connectionStatus: _ember['default'].inject.service(),
+    init: function init() {
+      this._super.apply(this, arguments);
+      var connection = this.get('connectionStatus');
+      connection.setup(this);
+    },
+    actions: {
+      online: function online(event) {
+        this.notifications.success(event.type, {
+          autoClear: true,
+          clearDuration: 1000
+        });
+      },
+      offline: function offline(event) {
+        this.notifications.error(event.type, {
+          autoClear: true,
+          clearDuration: 1000
+        });
+      }
+    }
+  });
+});
 define('dummy/controllers/application', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     connectionStatus: _ember['default'].inject.service(),
@@ -56,6 +80,9 @@ define('dummy/controllers/application', ['exports', 'ember'], function (exports,
       var connection = this.get('connectionStatus');
       connection.setup(this);
     },
+    status: _ember['default'].computed('connectionStatus.online', function () {
+      return this.get('connectionStatus.online') ? 'Online' : 'Offline';
+    }),
     actions: {
       online: function online(event) {
         this.notifications.success(event.type, {
@@ -288,9 +315,13 @@ define('dummy/services/ajax', ['exports', 'ember-ajax/services/ajax'], function 
 });
 define('dummy/services/connection-status', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Service.extend({
+    online: true,
     setup: function setup(owner) {
+      var _this = this;
+
       ;['online', 'offline'].forEach(function (status) {
         window.addEventListener(status, function (event) {
+          _this.set('online', status === 'online');
           try {
             owner.send(status, event);
           } catch (e) {}
@@ -315,7 +346,7 @@ define("dummy/templates/application", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 35,
+            "line": 39,
             "column": 0
           }
         },
@@ -341,11 +372,21 @@ define("dummy/templates/application", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  Try turning your wifi on and off!\n  All you need is to include the service in a route or controller\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("Current status is ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("pre");
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("\n  import Ember from 'ember';\n\n  export default Ember.Route.extend({\n    connectionStatus: Ember.inject.service(),\n    init () {\n      this._super(...arguments)\n      let connection = this.get('connectionStatus')\n      connection.setup(this)\n    },\n    actions: {\n      online (event) {\n        this.notifications.success(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      },\n      offline (event) {\n        this.notifications.error(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      }\n    }\n  });\n\n");
+        var el3 = dom.createTextNode("\n  import Ember from 'ember';\n\n  export default Ember.Route.extend({\n    connectionStatus: Ember.inject.service(),\n    init () {\n      this._super(...arguments)\n      let connection = this.get('connectionStatus')\n      connection.setup(this)\n    },\n    status: Ember.computed('connectionStatus.online', function () {\n      return this.get('connectionStatus.online')\n        ? 'Online' : 'Offline'\n    }),\n    actions: {\n      online (event) {\n        this.notifications.success(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      },\n      offline (event) {\n        this.notifications.error(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      }\n    }\n  });\n\n");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -354,12 +395,13 @@ define("dummy/templates/application", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
+        var morphs = new Array(2);
         morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [6, 1]), 0, 0);
         dom.insertBoundary(fragment, 0);
         return morphs;
       },
-      statements: [["inline", "notification-container", [], ["notifications", ["subexpr", "@mut", [["get", "notifications", ["loc", [null, [1, 39], [1, 52]]]]], [], []], "position", "top-right"], ["loc", [null, [1, 0], [1, 75]]]]],
+      statements: [["inline", "notification-container", [], ["notifications", ["subexpr", "@mut", [["get", "notifications", ["loc", [null, [1, 39], [1, 52]]]]], [], []], "position", "top-right"], ["loc", [null, [1, 0], [1, 75]]]], ["content", "status", ["loc", [null, [7, 27], [7, 37]]]]],
       locals: [],
       templates: []
     };
