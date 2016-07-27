@@ -42,6 +42,9 @@ module.exports = function(environment) {
   if (environment === 'production') {
 
   }
+  if (environment === 'pages') {
+    ENV.baseURL = '/ember-connection-status'
+  }
   ENV['ember-cli-notifications'] = {
     includeFontAwesome: true
   }
