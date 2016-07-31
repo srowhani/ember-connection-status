@@ -22,7 +22,7 @@ define('dummy/tests/controllers/application.jshint', ['exports'], function (expo
   QUnit.module('JSHint - controllers/application.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'controllers/application.js should pass jshint.\ncontrollers/application.js: line 8, col 2, Missing semicolon.\ncontrollers/application.js: line 12, col 30, Missing semicolon.\ncontrollers/application.js: line 13, col 50, Missing semicolon.\ncontrollers/application.js: line 14, col 27, Missing semicolon.\ncontrollers/application.js: line 18, col 7, Bad line breaking before \'?\'.\ncontrollers/application.js: line 18, col 29, Missing semicolon.\ncontrollers/application.js: line 22, col 47, Missing semicolon.\ncontrollers/application.js: line 25, col 47, Missing semicolon.\n\n8 errors');
+    assert.ok(false, 'controllers/application.js should pass jshint.\ncontrollers/application.js: line 8, col 2, Missing semicolon.\ncontrollers/application.js: line 12, col 30, Missing semicolon.\ncontrollers/application.js: line 13, col 50, Missing semicolon.\ncontrollers/application.js: line 14, col 27, Missing semicolon.\ncontrollers/application.js: line 18, col 7, Bad line breaking before \'?\'.\ncontrollers/application.js: line 18, col 29, Missing semicolon.\ncontrollers/application.js: line 22, col 47, Missing semicolon.\ncontrollers/application.js: line 25, col 45, Missing semicolon.\n\n8 errors');
   });
 });
 define('dummy/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
