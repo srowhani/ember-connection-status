@@ -1,6 +1,6 @@
 {
   "name": "ember-connection-status",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Hooks for loss and gain of connectivity for Ember.js",
   "homepage": "srowhani.github.io/ember-connection-status",
   "directories": {

@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
       notify.call(this, 'success', event.type)
     },
     offline (event) {
-      notify.call(this, 'failure', event.type)
+      notify.call(this, 'error', event.type)
     }
   }
 });
