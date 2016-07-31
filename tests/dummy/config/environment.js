@@ -48,5 +48,14 @@ module.exports = function(environment) {
   ENV['ember-cli-notifications'] = {
     includeFontAwesome: true
   }
+  ENV['googleFonts'] = [
+      'Open+Sans:300',
+      'Roboto:300'
+  ]
+    // Set or update content security policies
+  ENV['contentSecurityPolicy'] = {
+    'font-src': "'self' fonts.gstatic.com",
+    'style-src': "'self' fonts.googleapis.com"
+  }
   return ENV;
 };
