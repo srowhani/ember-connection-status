@@ -32,6 +32,66 @@ define('dummy/components/app-version', ['exports', 'ember-cli-app-version/compon
     name: name
   });
 });
+define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], function (exports, _ember, _dummySnippets) {
+
+  /* global require */
+  var Highlight = require('highlight.js');
+
+  exports["default"] = _ember["default"].Component.extend({
+    tagName: 'pre',
+    classNameBindings: ['language'],
+    unindent: true,
+
+    _unindent: function _unindent(src) {
+      if (!this.get('unindent')) {
+        return src;
+      }
+      var match,
+          min,
+          lines = src.split("\n");
+      for (var i = 0; i < lines.length; i++) {
+        match = /^\s*/.exec(lines[i]);
+        if (match && (typeof min === 'undefined' || min > match[0].length)) {
+          min = match[0].length;
+        }
+      }
+      if (typeof min !== 'undefined' && min > 0) {
+        src = src.replace(new RegExp("(\\n|^)\\s{" + min + "}", 'g'), "$1");
+      }
+      return src;
+    },
+
+    source: _ember["default"].computed('name', function () {
+      return this._unindent((_dummySnippets["default"][this.get('name')] || "").replace(/^(\s*\n)*/, '').replace(/\s*$/, ''));
+    }),
+
+    didInsertElement: function didInsertElement() {
+      Highlight.highlightBlock(this.get('element'));
+    },
+
+    language: _ember["default"].computed('name', function () {
+      var m = /\.(\w+)$/i.exec(this.get('name'));
+      if (m) {
+        switch (m[1].toLowerCase()) {
+          case 'js':
+            return 'javascript';
+          case 'coffee':
+            return 'coffeescript';
+          case 'hbs':
+            return 'handlebars';
+          case 'css':
+            return 'css';
+          case 'scss':
+            return 'scss';
+          case 'less':
+            return 'less';
+          case 'emblem':
+            return 'emblem';
+        }
+      }
+    })
+  });
+});
 define('dummy/components/notification-container', ['exports', 'ember-cli-notifications/components/notification-container'], function (exports, _emberCliNotificationsComponentsNotificationContainer) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
@@ -73,6 +133,13 @@ define('dummy/components/test-component', ['exports', 'ember'], function (export
   });
 });
 define('dummy/controllers/application', ['exports', 'ember'], function (exports, _ember) {
+
+  var notify = function notify(type, msg) {
+    this.notifications[type](msg, {
+      autoClear: true,
+      clearDuration: 1000
+    });
+  };
   exports['default'] = _ember['default'].Controller.extend({
     connectionStatus: _ember['default'].inject.service(),
     init: function init() {
@@ -81,20 +148,14 @@ define('dummy/controllers/application', ['exports', 'ember'], function (exports,
       connection.setup(this);
     },
     status: _ember['default'].computed('connectionStatus.online', function () {
-      return this.get('connectionStatus.online') ? 'Online' : 'Offline';
+      return this.get('connectionStatus.online') ? 'online' : 'offline';
     }),
     actions: {
       online: function online(event) {
-        this.notifications.success(event.type, {
-          autoClear: true,
-          clearDuration: 1000
-        });
+        notify.call(this, 'success', event.type);
       },
       offline: function offline(event) {
-        this.notifications.error(event.type, {
-          autoClear: true,
-          clearDuration: 1000
-        });
+        notify.call(this, 'failure', event.type);
       }
     }
   });
@@ -330,6 +391,11 @@ define('dummy/services/connection-status', ['exports', 'ember'], function (expor
     }
   });
 });
+define("dummy/snippets", ["exports"], function (exports) {
+  exports["default"] = {
+    "example.js": "import Ember from 'ember';\n\nlet notify = function (type, msg) {\n  this.notifications[type](msg, {\n    autoClear: true,\n    clearDuration: 1000\n  });\n}\nexport default Ember.Controller.extend({\n  connectionStatus: Ember.inject.service(),\n  init () {\n    this._super(...arguments)\n    let connection = this.get('connectionStatus')\n    connection.setup(this)\n  },\n  status: Ember.computed('connectionStatus.online', function () {\n    return this.get('connectionStatus.online')\n      ? 'online' : 'offline'\n  }),\n  actions: {\n    online (event) {\n      notify.call(this, 'success', event.type)\n    },\n    offline (event) {\n      notify.call(this, 'failure', event.type)\n    }\n  }\n});\n"
+  };
+});
 define("dummy/templates/application", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -346,7 +412,7 @@ define("dummy/templates/application", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 39,
+            "line": 9,
             "column": 0
           }
         },
@@ -369,7 +435,7 @@ define("dummy/templates/application", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Try turning your wifi on and off!\n  All you need is to include the service in a route or controller\n");
+        var el2 = dom.createTextNode("\n  Try turning your wifi on and off!\n  All you need is to include the service in a route, controller, or component\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -384,24 +450,67 @@ define("dummy/templates/application", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("pre");
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("\n  import Ember from 'ember';\n\n  export default Ember.Route.extend({\n    connectionStatus: Ember.inject.service(),\n    init () {\n      this._super(...arguments)\n      let connection = this.get('connectionStatus')\n      connection.setup(this)\n    },\n    status: Ember.computed('connectionStatus.online', function () {\n      return this.get('connectionStatus.online')\n        ? 'Online' : 'Offline'\n    }),\n    actions: {\n      online (event) {\n        this.notifications.success(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      },\n      offline (event) {\n        this.notifications.error(event.type, {\n          autoClear: true,\n          clearDuration: 1000\n        });\n      }\n    }\n  });\n\n");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(2);
+        var morphs = new Array(3);
         morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
         morphs[1] = dom.createMorphAt(dom.childAt(fragment, [6, 1]), 0, 0);
+        morphs[2] = dom.createMorphAt(fragment, 8, 8, contextualElement);
         dom.insertBoundary(fragment, 0);
         return morphs;
       },
-      statements: [["inline", "notification-container", [], ["notifications", ["subexpr", "@mut", [["get", "notifications", ["loc", [null, [1, 39], [1, 52]]]]], [], []], "position", "top-right"], ["loc", [null, [1, 0], [1, 75]]]], ["content", "status", ["loc", [null, [7, 27], [7, 37]]]]],
+      statements: [["inline", "notification-container", [], ["notifications", ["subexpr", "@mut", [["get", "notifications", ["loc", [null, [1, 39], [1, 52]]]]], [], []], "position", "top-right"], ["loc", [null, [1, 0], [1, 75]]]], ["content", "status", ["loc", [null, [7, 27], [7, 37]]]], ["inline", "code-snippet", [], ["name", "example.js"], ["loc", [null, [8, 0], [8, 34]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define("dummy/templates/components/code-snippet", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["wrong-type"]
+        },
+        "revision": "Ember@2.3.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/templates/components/code-snippet.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [["content", "source", ["loc", [null, [1, 0], [1, 10]]]]],
       locals: [],
       templates: []
     };
@@ -439,7 +548,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.0+a2852b6f"});
+  require("dummy/app")["default"].create({"name":"ember-connection-status","version":"0.0.1+3e47c6ea"});
 }
 
 /* jshint ignore:end */
