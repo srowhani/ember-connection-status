@@ -393,7 +393,7 @@ define('dummy/services/connection-status', ['exports', 'ember'], function (expor
 });
 define("dummy/snippets", ["exports"], function (exports) {
   exports["default"] = {
-    "example.js": "import Ember from 'ember';\n\nlet notify = function (type, msg) {\n  this.notifications[type](msg, {\n    autoClear: true,\n    clearDuration: 1000\n  });\n}\nexport default Ember.Controller.extend({\n  connectionStatus: Ember.inject.service(),\n  init () {\n    this._super(...arguments)\n    let connection = this.get('connectionStatus')\n    connection.setup(this)\n  },\n  status: Ember.computed('connectionStatus.online', function () {\n    return this.get('connectionStatus.online')\n      ? 'online' : 'offline'\n  }),\n  actions: {\n    online (event) {\n      notify.call(this, 'success', event.type)\n    },\n    offline (event) {\n      notify.call(this, 'error', event.type)\n    }\n  }\n});\n"
+    "example.js": "import Ember from 'ember';\n\nlet notify = function (type, msg) {\n  this.notifications[type](msg, {\n    autoClear: true,\n    clearDuration: 1000\n  });\n}\nexport default Ember.Controller.extend({\n  connectionStatus: Ember.inject.service(),\n  init () {\n    this._super(...arguments)\n    let connection = this.get('connectionStatus')\n    connection.setup(this)\n  },\n  status: Ember.computed('connectionStatus.online', function () {\n    return this.get('connectionStatus.online')\n      ? 'online' : 'offline'\n  }),\n  actions: {\n    online (event) {\n      notify.call(this, 'success', event.type)\n    },\n    offline (event) {\n      notify.call(this, 'error', event.type)\n    }\n  }\n})\n"
   };
 });
 define("dummy/templates/application", ["exports"], function (exports) {
